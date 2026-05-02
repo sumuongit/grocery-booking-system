@@ -1,89 +1,102 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import * as itemService from "./item.service";
 
 // Create new item (Admin) 
-export const createItem = async (req: Request, res: Response) => {
-    const { name, price, inventory } = req.body;
+export const createItem = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { name, price, inventory } = req.body;
 
-    // Check name, price, and inventory are available
-    if (!name === undefined || price === undefined || inventory === undefined) {
-        return res.status(400).json({
-            message: "name, price, and inventory are required",
+        // Check name, price, and inventory are available
+        if (!name === undefined || price === undefined || inventory === undefined) {
+            const error: any = new Error("name, price, and inventory are required");
+            error.statusCode = 400;
+            return next(error);
+        }
+
+        const parsedPrice = Number(price);
+        const parsedInventory = Number(inventory);
+
+        // Validate numeric values
+        if (isNaN(parsedPrice) || isNaN(parsedInventory)) {
+            const error: any = new Error("price and inventory must be valid numbers");
+            error.statusCode = 400;
+            return next(error);
+        }
+
+        const item = await itemService.createItem({
+            name,
+            price: parsedPrice,
+            inventory: parsedInventory
         });
+        res.status(201).json(item);
+    } catch (error) {
+        next(error);
     }
-
-    const parsedPrice = Number(price);
-    const parsedInventory = Number(inventory);
-
-    // Validate numeric values
-    if (isNaN(parsedPrice) || isNaN(parsedInventory)) {
-        return res.status(400).json({
-            message: "price and inventory must be valid numbers",
-        });
-    }
-
-    const item = await itemService.createItem({
-        name,
-        price: parsedPrice,
-        inventory: parsedInventory
-    });
-    res.status(201).json(item);
 };
 
 // Get all items (Public)
-export const getItems = async (_req: Request, res: Response) => {
-    const items = await itemService.getItems();
-    res.json(items);
+export const getItems = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+        const items = await itemService.getItems();
+        res.json(items);
+    } catch (error) {
+        next(error);
+    }
 };
 
 // Update item details (Admin)
-export const updateItem = async (req: Request<{ id: string }, {}, any>, res: Response) => {
-    const data: any = { ...req.body };
+export const updateItem = async (req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction) => {
+    try {
+        const data: any = { ...req.body };
 
-    if (data.price !== undefined) {
-        const parsedPrice = Number(data.price);
-        if (isNaN(parsedPrice)) {
-            return res.status(400).json({ message: "price must be a number" });
+        if (data.price !== undefined) {
+            const parsedPrice = Number(data.price);
+            if (isNaN(parsedPrice)) {
+                return res.status(400).json({ message: "price must be a number" });
+            }
+            data.price = parsedPrice;
         }
-        data.price = parsedPrice;
-    }
 
-    if (data.inventory !== undefined) {
-        const parsedInventory = Number(data.inventory);
-        if (isNaN(parsedInventory)) {
-            return res.status(400).json({ message: "inventory must be a number" });
+        if (data.inventory !== undefined) {
+            const parsedInventory = Number(data.inventory);
+            if (isNaN(parsedInventory)) {
+                return res.status(400).json({ message: "inventory must be a number" });
+            }
+            data.inventory = parsedInventory;
         }
-        data.inventory = parsedInventory;
-    }
 
-    const item = await itemService.updateItem(req.params.id, data);
-    res.json(item);
+        const item = await itemService.updateItem(req.params.id, data);
+        res.json(item);
+    } catch (error) {
+        next(error);
+    }
 };
 
 //Delete item (Admin)
-export const deleteItem = async (req: Request<{ id: string }, {}, any>, res: Response) => {
-    await itemService.deleteItem(req.params.id);
-    res.json({ message: "Item deleted successfully" });
+export const deleteItem = async (req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction) => {
+    try {
+        await itemService.deleteItem(req.params.id);
+        res.json({ message: "Item deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
 };
 
 // Update inventory (Admin)
-export const updateInventory = async (req: Request<{ id: string }, {}, any>, res: Response) => {
-    const { inventory } = req.body;
+export const updateInventory = async (req: Request<{ id: string }, {}, any>, res: Response, next: NextFunction) => {
+    try {
+        const { inventory } = req.body;
+        const parsedInventory = Number(inventory);
 
-    if (inventory === undefined) {
-        return res.status(400).json({ message: "inventory is required" });
+        if (inventory === undefined || isNaN(parsedInventory)) {
+            const error: any = new Error("Valid inventory number is required");
+            error.statusCode = 400;
+            return next(error);
+        }
+
+        const item = await itemService.updateInventory(req.params.id, parsedInventory);
+        res.json(item);
+    } catch (error) {
+        next(error);
     }
-
-    const parsedInventory = Number(inventory);
-
-    if (isNaN(parsedInventory)) {
-        return res.status(400).json({ message: "inventory must be a number" });
-    }
-
-    const item = await itemService.updateInventory(
-        req.params.id,
-        parsedInventory
-    );
-
-    res.json(item);
 };

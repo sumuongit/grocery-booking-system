@@ -61,11 +61,11 @@ erDiagram
 ## API Endpoints
 
 ### Public
+Both Admin and User roles use the same endpoint to view available grocery items.
 - Get Items: GET /api/items
 
 ### Admin
-Header:
-- x-role: ADMIN
+Header: x-role: ADMIN
 
 - Create Item: POST /api/admin/items
 - Update Item: PATCH /api/admin/items/{id}
@@ -78,8 +78,7 @@ Header:
 
 Mock User:
 - ID: 11111111-1111-1111-1111-111111111111
-- x-role: USER
-
+- HEADER: x-role: USER
 - Place Order: POST /api/user/orders
 
 ### Seed Data
@@ -91,6 +90,7 @@ npx ts-node src/scripts/seed.ts
 
 ## Sample Request
 POST /api/admin/items
+
 ```json
 {
   "name": "Rice",
@@ -110,7 +110,6 @@ POST /api/user/orders
 ```
 
 ## API Testing
-
 Postman collection is available at:
 
 /docs/postman_collection.json

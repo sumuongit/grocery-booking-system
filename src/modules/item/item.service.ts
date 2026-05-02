@@ -20,6 +20,14 @@ export const updateItem = async (id: string, data: {
     price?: number;
     inventory?: number;
 }) => {
+    const exists = await prisma.item.findUnique({ where: { id } });
+
+    if (!exists) {
+        const error: any = new Error("Item not found");
+        error.statusCode = 404;
+        throw error;
+    }
+
     return prisma.item.update({
         where: { id },
         data: {
@@ -32,6 +40,14 @@ export const updateItem = async (id: string, data: {
 
 // Delete item
 export const deleteItem = async (id: string) => {
+    const item = await prisma.item.findUnique({ where: { id } });
+
+    if (!item) {
+        const error: any = new Error("Item not found");
+        error.statusCode = 404;
+        throw error;
+    }
+
     return prisma.item.delete({
         where: { id },
     });
@@ -39,6 +55,13 @@ export const deleteItem = async (id: string) => {
 
 // Update inventory only
 export const updateInventory = async (id: string, inventory: number) => {
+    const exists = await prisma.item.findUnique({ where: { id } });
+    if (!exists) {
+        const error: any = new Error("Item not found");
+        error.statusCode = 404;
+        throw error;
+    }
+
     return prisma.item.update({
         where: { id },
         data: { inventory },

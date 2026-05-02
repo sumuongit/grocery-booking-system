@@ -19,11 +19,15 @@ export const createOrder = async (data: {
             const dbItem = dbItems.find((i) => i.id === orderItem.itemId);
 
             if (!dbItem) {
-                throw new Error(`Item not found: ${orderItem.itemId}`);
+                const error: any = new Error(`Item not found: ${orderItem.itemId}`);
+                error.statusCode = 400;
+                throw error;
             }
 
             if (dbItem.inventory < orderItem.quantity) {
-                throw new Error(`Insufficient stock for item: ${dbItem.name}`);
+                const error: any = new Error(`Insufficient stock for item: ${dbItem.name}`);
+                error.statusCode = 400;
+                throw error;
             }
 
             totalPrice += dbItem.price * orderItem.quantity;
