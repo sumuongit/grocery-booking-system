@@ -1,4 +1,5 @@
 import prisma from "../../config/prisma";
+import logger from "../../config/logger";
 
 export const createOrder = async (data: {
     userId: string;
@@ -14,15 +15,15 @@ export const createOrder = async (data: {
             where: { id: { in: itemIds } },
         });
 
+        if (dbItems.length !== data.items.length) {
+            const error: any = new Error("One or more items not found");
+            error.statusCode = 404;
+            throw error;
+        }
+        
         // Validate items and calculate total price
         for (const orderItem of data.items) {
-            const dbItem = dbItems.find((i) => i.id === orderItem.itemId);
-
-            if (!dbItem) {
-                const error: any = new Error(`Item not found: ${orderItem.itemId}`);
-                error.statusCode = 400;
-                throw error;
-            }
+            const dbItem = dbItems.find((i) => i.id === orderItem.itemId)!;            
 
             if (dbItem.inventory < orderItem.quantity) {
                 const error: any = new Error(`Insufficient stock for item: ${dbItem.name}`);
@@ -62,7 +63,7 @@ export const createOrder = async (data: {
             });
         }
 
-        return tx.order.findUnique({
+        const result = await tx.order.findUnique({
             where: { id: order.id },
             include: {
                 items: {
@@ -72,5 +73,14 @@ export const createOrder = async (data: {
                 },
             }
         });
+
+        logger.info({
+            message: "Order created successfully",
+            orderId: result?.id,
+            userId: data.userId,
+            totalPrice,
+        });
+
+        return result;
     });
 };

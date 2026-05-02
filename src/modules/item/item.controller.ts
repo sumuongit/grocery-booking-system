@@ -7,7 +7,7 @@ export const createItem = async (req: Request, res: Response, next: NextFunction
         const { name, price, inventory } = req.body;
 
         // Check name, price, and inventory are available
-        if (!name === undefined || price === undefined || inventory === undefined) {
+        if (!name || price === undefined || inventory === undefined) {
             const error: any = new Error("name, price, and inventory are required");
             error.statusCode = 400;
             return next(error);
@@ -52,7 +52,9 @@ export const updateItem = async (req: Request<{ id: string }, {}, any>, res: Res
         if (data.price !== undefined) {
             const parsedPrice = Number(data.price);
             if (isNaN(parsedPrice)) {
-                return res.status(400).json({ message: "price must be a number" });
+                const error: any = new Error("price must be a number");
+                error.statusCode = 400;
+                return next(error);
             }
             data.price = parsedPrice;
         }
@@ -60,7 +62,9 @@ export const updateItem = async (req: Request<{ id: string }, {}, any>, res: Res
         if (data.inventory !== undefined) {
             const parsedInventory = Number(data.inventory);
             if (isNaN(parsedInventory)) {
-                return res.status(400).json({ message: "inventory must be a number" });
+                const error: any = new Error("inventory must be a number");
+                error.statusCode = 400;
+                return next(error);
             }
             data.inventory = parsedInventory;
         }

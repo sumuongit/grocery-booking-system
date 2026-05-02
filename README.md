@@ -1,5 +1,5 @@
 # Grocery Booking System API
-Node.js (TypeScript) REST API for a grocery booking system with inventory management, order processing, and Dockerized PostgreSQL setup.
+Node.js (TypeScript) REST API for a grocery booking system with inventory management, transactional order processing, and Dockerized PostgreSQL setup.
 
 ## Tech Stack
 - Node.js + Express
@@ -9,14 +9,51 @@ Node.js (TypeScript) REST API for a grocery booking system with inventory manage
 - Docker
 
 ## Setup Instructions
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/sumuongit/grocery-booking-system.git
+   cd grocery-booking-system
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**
+   - Copy `.env.example` to a new file named `.env`
+   - Adjust `DATABASE_URL`
+   ```bash
+   cp .env.example .env
+   ```
+
+4. **Start the Database**
+   ```bash
+   docker-compose up -d
+   ```
+
+5. **Initialize Database & Seed Data**
+   ```bash
+   npx prisma migrate dev
+   npx prisma db seed
+   ```
+
+6. **Run the Application**
+   ```bash
+   npm run dev
+   ```
+
+## Running Tests
 ```bash
-git clone https://github.com/sumuongit/grocery-booking-system.git
-npm install
-cp .env.example .env
-docker-compose up -d
-npx prisma migrate dev
-npm run dev
+npm test
 ```
+
+### API Testing
+Import the Postman collection located at:
+`/docs/postman_collection.json`
+
+- base_url: http://localhost:5000/api
+- Replace `{id}` with the item ID returned from the create API
 
 ## Database Schema (ER Diagram)
 ```mermaid
@@ -73,20 +110,13 @@ Header: x-role: ADMIN
 - Update Inventory: PATCH /api/admin/items/{id}/inventory
 
 ### User
-- A mock user is used to simulate authenticated requests
-- All order operations are performed using a predefined user ID
+Header: x-role: USER
 
-Mock User:
-- ID: 11111111-1111-1111-1111-111111111111
-- HEADER: x-role: USER
 - Place Order: POST /api/user/orders
 
-### Seed Data
-Run the following to create a mock user required for order placement:
-
-```bash
-npx ts-node src/scripts/seed.ts
-```
+Mock User:
+- A mock user is used to simulate authenticated requests
+- All order operations are performed using a predefined user ID: 11111111-1111-1111-1111-111111111111
 
 ## Sample Request
 POST /api/admin/items
@@ -109,17 +139,10 @@ POST /api/user/orders
 }
 ```
 
-## API Testing
-Postman collection is available at:
-
-/docs/postman_collection.json
-
-Import into Postman and set:
-- base_url: http://localhost:5000/api
-- Replace `{id}` with the item ID returned from the create API
-
 ## Notes
 - Simple role-based authorization implemented via header
 - Input validation handled at controller level
+- Basic logging is implemented using Winston for error tracking and key events
 - Modular structure (controller/service/routes)
 - Prisma used for type-safe database access
+- Order creation is handled within a database transaction to ensure data consistency
