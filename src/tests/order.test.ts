@@ -25,6 +25,7 @@ describe("Order API", () => {
   it("should create an order successfully and reduce inventory", async () => {
     const res = await request(app)
       .post("/api/user/orders")
+      .set("x-role", "USER")
       .send({
         items: [{ itemId: TEST_ITEM_ID, quantity: 2 }],
       });
@@ -44,6 +45,7 @@ describe("Order API", () => {
   it("should fail when inventory is insufficient", async () => {
     const res = await request(app)
       .post("/api/user/orders")
+      .set("x-role", "USER")
       .send({
         items: [{ itemId: TEST_ITEM_ID, quantity: 9999 }],
       });
@@ -54,6 +56,7 @@ describe("Order API", () => {
   it("should fail for a non-existent item ID", async () => {
     const res = await request(app)
       .post("/api/user/orders")
+      .set("x-role", "USER")
       .send({
         items: [{ itemId: "00000000-0000-0000-0000-000000000000", quantity: 1 }],
       });
