@@ -52,8 +52,9 @@ npm test
 Import the Postman collection located at:
 `/docs/postman_collection.json`
 
+Variables
 - base_url: http://localhost:5000/api
-- Replace `{id}` with the item ID returned from the create API
+- id: Replace with the item ID returned from the create API
 
 ## Database Schema (ER Diagram)
 ```mermaid
@@ -123,9 +124,10 @@ POST /api/admin/items
 
 ```json
 {
-  "name": "Rice",
-  "price": 50,
-  "inventory": 100
+   "id": "550e8400-e29b-41d4-a716-446655440000",
+   "name": "Soap",
+   "price": 70.00,
+   "inventory": 150
 }
 ```
 POST /api/user/orders
@@ -133,8 +135,8 @@ POST /api/user/orders
 ```json
 {
   "items": [
-    { "itemId": "9d114ad2-0bae-44bd-a57c-4e675784e365", "quantity": 5 },
-    { "itemId": "29af2c28-2d85-4bb0-bed8-18fd7beac30a", "quantity": 1 }
+    { "itemId": "550e8400-e29b-41d4-a716-446655440000", "quantity": 2 },
+    { "itemId": "550e8400-e29b-41d4-a716-446655440001", "quantity": 3 }    
   ]
 }
 ```

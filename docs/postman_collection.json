@@ -1,0 +1,226 @@
+{
+  "info": {
+    "_postman_id": "a95b508b-a25c-4815-9e25-0fd1fc39c9b2",
+    "name": "Grocery Booking API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "403040"
+  },
+  "item": [
+    {
+      "name": "Get Items (Public)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/items",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "items"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Item (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-role",
+            "value": "ADMIN",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": " {\r\n    \"name\": \"Shaving Cream\",\r\n    \"price\": 380.00,\r\n    \"inventory\": 35\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/admin/items",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "admin",
+            "items"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Item (Admin)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "x-role",
+            "value": "ADMIN",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": " {    \r\n    \"price\": 75.00    \r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/admin/items/{{id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "admin",
+            "items",
+            "{{id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Item (Admin)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "x-role",
+            "value": "ADMIN",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/admin/items/{{id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "admin",
+            "items",
+            "{{id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Inventory (Admin)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "x-role",
+            "value": "ADMIN",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": " {    \r\n    \"inventory\": 200\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/admin/items/{{id}}/inventory",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "admin",
+            "items",
+            "{{id}}",
+            "inventory"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Order (User)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-role",
+            "value": "USER",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"items\": [\r\n    { \"itemId\": \"550e8400-e29b-41d4-a716-446655440000\", \"quantity\": 2 },\r\n    { \"itemId\": \"550e8400-e29b-41d4-a716-446655440001\", \"quantity\": 1 }\r\n  ]\r\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/user/orders",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "user",
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "id",
+      "value": "550e8400-e29b-41d4-a716-446655440000"
+    }
+  ]
+}
