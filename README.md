@@ -1,5 +1,5 @@
 # Grocery Booking System API
-Node.js (TypeScript) REST API for a grocery booking system with inventory management, transactional order processing, and Dockerized PostgreSQL setup.
+Node.js (TypeScript) REST API for a grocery booking system with inventory management, transactional order processing, and fully Dockerized deployment.
 
 ## Tech Stack
 - Node.js + Express
@@ -8,7 +8,36 @@ Node.js (TypeScript) REST API for a grocery booking system with inventory manage
 - Prisma ORM
 - Docker
 
-## Setup Instructions
+## Setup Instructions (Docker)
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/sumuongit/grocery-booking-system.git
+   cd grocery-booking-system
+   ```
+
+2. **Environment Setup**      
+   ```bash
+   cp .env.example .env
+   ```
+   - For Docker, ensure:  `DATABASE_URL=postgresql://postgres:postgres@db:5432/grocery`
+
+3. **Run the Application (App + DB)**
+   ```bash
+   docker-compose up --build -d
+   ```
+   - API will be available at: http://localhost:5000
+
+4. **Run Database Migrations**
+   ```bash
+   docker-compose exec app npx prisma migrate deploy
+   ```
+
+5. **Seed the Database**
+   ```bash
+   docker-compose exec app npx prisma db seed
+   ```
+
+## Run Locally (Optional)
 1. **Clone the repository**
    ```bash
    git clone https://github.com/sumuongit/grocery-booking-system.git
@@ -20,16 +49,15 @@ Node.js (TypeScript) REST API for a grocery booking system with inventory manage
    npm install
    ```
 
-3. **Environment Setup**
-   - Copy `.env.example` to a new file named `.env`
-   - Adjust `DATABASE_URL`
+3. **Environment Setup**      
    ```bash
    cp .env.example .env
    ```
+   - Update `DATABASE_URL` if needed
 
 4. **Start the Database**
    ```bash
-   docker-compose up -d
+   docker-compose up -d db
    ```
 
 5. **Initialize Database & Seed Data**
@@ -47,14 +75,15 @@ Node.js (TypeScript) REST API for a grocery booking system with inventory manage
 ```bash
 npm test
 ```
+- Tests are executed locally using Jest. Ensure the database is running
 
 ### API Testing
 Import the Postman collection located at:
 `/docs/postman_collection.json`
 
-Variables
+**Variables**
 - base_url: http://localhost:5000/api
-- id: Replace with the item ID returned from the create API
+- id: Replace with actual item ID
 
 ## Database Schema (ER Diagram)
 ```mermaid
@@ -123,8 +152,7 @@ Mock User:
 POST /api/admin/items
 
 ```json
-{
-   "id": "550e8400-e29b-41d4-a716-446655440000",
+{   
    "name": "Soap",
    "price": 70.00,
    "inventory": 150
@@ -142,9 +170,15 @@ POST /api/user/orders
 ```
 
 ## Notes
-- Simple role-based authorization implemented via header
+- Role-based authorization via request header
+- Centralized error handling middleware
+- Logging implemented using Winston
 - Input validation handled at controller level
-- Basic logging is implemented using Winston for error tracking and key events
-- Modular structure (controller/service/routes)
-- Prisma used for type-safe database access
-- Order creation is handled within a database transaction to ensure data consistency
+- Modular architecture (controller/service/routes)
+- Prisma ORM for type-safe database access
+- Order processing uses database transactions for consistency
+
+## Design Decisions
+ - **Transactions:** Used Prisma's $transaction to ensure that an order is only created if inventory is successfully deducted.
+ - **Concurrency:** Inventory is validated before deduction to prevent overselling.
+ - **Auth Simulation:** Used custom headers (x-role) to simulate RBAC (Role-Based Access Control) as per assignment scope.
