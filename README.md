@@ -25,7 +25,7 @@ Node.js (TypeScript) REST API for a grocery booking system with inventory manage
    ```bash
    docker-compose up --build -d
    ```
-   - API will be available at: http://localhost:5000
+   - API will be available at: http://localhost:5000 (base URL: /api)
 
 4. **Run Database Migrations**
    ```bash
@@ -38,35 +38,29 @@ Node.js (TypeScript) REST API for a grocery booking system with inventory manage
    ```
 
 ## Run Locally (Optional)
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/sumuongit/grocery-booking-system.git
-   cd grocery-booking-system
-   ```
-
-2. **Install dependencies**
+1. **Install dependencies**
    ```bash
    npm install
    ```
 
-3. **Environment Setup**      
+2. **Environment Setup**      
    ```bash
    cp .env.example .env
    ```
    - Update `DATABASE_URL` if needed
 
-4. **Start the Database**
+3. **Start the Database**
    ```bash
    docker-compose up -d db
    ```
 
-5. **Initialize Database & Seed Data**
+4. **Initialize Database & Seed Data**
    ```bash
    npx prisma migrate dev
    npx prisma db seed
    ```
 
-6. **Run the Application**
+5. **Run the Application**
    ```bash
    npm run dev
    ```
@@ -75,15 +69,15 @@ Node.js (TypeScript) REST API for a grocery booking system with inventory manage
 ```bash
 npm test
 ```
-- Tests are executed locally using Jest. Ensure the database is running
+- Tests are executed locally using Jest. Ensure the database is running (via Docker or locally).
 
 ### API Testing
-Import the Postman collection located at:
+**Import the Postman collection located at:**
 `/docs/postman_collection.json`
 
 **Variables**
-- base_url: http://localhost:5000/api
-- id: Replace with actual item ID
+- **base_url:** http://localhost:5000/api
+- **id:** Replace with actual item ID
 
 ## Database Schema (ER Diagram)
 ```mermaid
@@ -129,22 +123,22 @@ erDiagram
 
 ### Public
 Both Admin and User roles use the same endpoint to view available grocery items.
-- Get Items: GET /api/items
+- **Get Items:** GET /api/items
 
 ### Admin
 Header: x-role: ADMIN
 
-- Create Item: POST /api/admin/items
-- Update Item: PATCH /api/admin/items/{id}
-- Delete Item: DELETE /api/admin/items/{id}
-- Update Inventory: PATCH /api/admin/items/{id}/inventory
+- **Create Item:** POST /api/admin/items
+- **Update Item:** PATCH /api/admin/items/{id}
+- **Delete Item:** DELETE /api/admin/items/{id}
+- **Update Inventory:** PATCH /api/admin/items/{id}/inventory
 
 ### User
 Header: x-role: USER
 
-- Place Order: POST /api/user/orders
+- **Place Order:** POST /api/user/orders
 
-Mock User:
+**Mock User:**
 - A mock user is used to simulate authenticated requests
 - All order operations are performed using a predefined user ID: 11111111-1111-1111-1111-111111111111
 
@@ -179,6 +173,6 @@ POST /api/user/orders
 - Order processing uses database transactions for consistency
 
 ## Design Decisions
- - **Transactions:** Used Prisma's $transaction to ensure that an order is only created if inventory is successfully deducted.
+ - **Transactions:** Prisma $transaction ensures atomic order creation and inventory updates.
  - **Concurrency:** Inventory is validated before deduction to prevent overselling.
- - **Auth Simulation:** Used custom headers (x-role) to simulate RBAC (Role-Based Access Control) as per assignment scope.
+ - **Auth Simulation:** Custom headers (x-role) simulate RBAC as per assignment scope.
