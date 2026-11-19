@@ -11,6 +11,24 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: grocery
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d grocery"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/grocery
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -29,6 +47,9 @@ jobs:
 
       - name: Build application
         run: npm run build
+
+      - name: Run database migrations
+        run: npx prisma migrate deploy
 
       - name: Run tests
         run: npm test
