@@ -3,7 +3,7 @@ name: Grocery API - CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, feature/ci-cd-kubernetes]
   pull_request:
     branches: [main, develop]
 
