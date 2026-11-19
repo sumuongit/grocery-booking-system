@@ -1,0 +1,26 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grocery-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grocery-api
+  template:
+    metadata:
+      labels:
+        app: grocery-api
+    spec:
+      containers:
+        - name: grocery-api
+          image: grocery-booking-api:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: grocery-config
+            - secretRef:
+                name: grocery-secret
